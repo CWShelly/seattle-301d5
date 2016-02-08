@@ -54,45 +54,28 @@ Article.fetchAll = function() {
       success: function(data, message, xhr){
         console.log(xhr);
         var eTag = xhr.getResponseHeader('eTag');
-       if(!localStorage.eTag || etag !== localStorage.eTag){
+       if(!localStorage.eTag || eTag !== localStorage.eTag){
+        console.log('changed jason');
          localStorage.eTag = eTag;
-       } else{
-
-         Article.loadAll(JSON.parse(localStorage.rawData));
+         $.getJSON('data/hackerIpsum.json', function(data){
+          Article.loadAll(data);
+          localStorage.setItem('rawData', JSON.stringify(Article.all));
+          articleView.initIndexPage();
+        });
+       } else {
+         console.log(localStorage.getItem('rawData'));
+         Article.loadAll(JSON.parse(localStorage.getItem('rawData')));
          articleView.initIndexPage();
-        //  console.log('.ajax else');
-         //method that will render our index page components(TODO)// PROBABLY IN AN ARTICLE.VIEW METHOD
-
        }
-      }
+     }
     });
-    // Article.loadAll(//TODO: What do we pass in here to the .loadAll function?
-      // localStorage.setItem('allArticles', Article.all);
-    // );
-    // articleView.someFunctionToCall; //TODO: What method do we call to render the index page?
-    // articleView.initIndexPage
   } else {
 
     console.log('other things');
     $.getJSON('data/hackerIpsum.json', function(data){
-      console.log(data);
      Article.loadAll(data);
-     localStorage.setItem('allArticles', Article.all);
+     localStorage.setItem('rawData', JSON.stringify(Article.all));
      articleView.initIndexPage();
-    })
-    // TODO: When we don't already have the rawData,
-    // we need to retrieve the JSON file //(therefore: make json call)from the server with AJAX (which jQuery method is best for this?),
-    // cache it in localStorage so we can skip the server call next time,
-    // then load all the data into Article.all with the .loadAll function above,
-    // and then render the index page.
-  // my notes:
+   });
   }
 }
-//
-// $.getJSON('url', function(data){
-//   //stuff to handle after response
-
-    // load all the data
-    // setup localStorage to contain data
-    // initialize the index page(render the content)
-// });
